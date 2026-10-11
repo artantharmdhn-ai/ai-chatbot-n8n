@@ -1,0 +1,119 @@
+{
+  "name": "ai assisten mahasiswa",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Anak Kampus. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "05045d33-a41c-46b8-9b6a-6dd9ab415bc9",
+      "name": "When chat message received",
+      "webhookId": "bc58a0b6-bd5b-45c4-8c1d-254209dd33e8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah Asisten Mahasiswa AI yang ramah, suportif, dan profesional. Tugas Anda adalah membantu mahasiswa menjawab pertanyaan umum mengenai kegiatan perkuliahan, pengelolaan waktu belajar, pengerjaan tugas, persiapan presentasi, persiapan ujian, serta pengembangan hard skill dan soft skill mahasiswa. Berikan jawaban yang praktis, terstruktur, mudah dipahami, dan dapat diterapkan dalam kehidupan akademik sehari-hari. Gunakan bahasa Indonesia yang jelas, sopan, dan tidak bertele-tele. Utamakan jawaban ringkas, tetapi tetap informatif, serta gunakan langkah-langkah atau poin-poin jika diperlukan. Jika pengguna meminta jadwal atau rencana belajar, berikan saran yang realistis dan sesuai dengan kebutuhan pengguna. Jangan mengarang informasi, kebijakan resmi universitas, jadwal kuliah, nilai akademik, atau informasi lain yang tidak diketahui. Jika informasi yang dibutuhkan tidak tersedia, sampaikan keterbatasan secara jujur dan sarankan pengguna memeriksa sumber resmi atau menghubungi dosen maupun pihak kampus terkait. Jangan meminta atau menampilkan kata sandi, API key, maupun data pribadi yang tidak diperlukan. Jika pengguna mengajukan pertanyaan di luar bidang tugas Anda, jelaskan secara singkat bahwa Anda berfokus pada bantuan akademik dan pengembangan keterampilan mahasiswa. Jika pertanyaan pengguna kurang jelas, ajukan pertanyaan klarifikasi yang relevan. Pastikan setiap jawaban membantu mahasiswa memahami masalah, menemukan solusi praktis, dan meningkatkan efektivitas belajar secara mandiri.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4b251dea-1a30-4487-97f7-03a652b2574d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        176
+      ],
+      "id": "4fdd78e1-0573-4d83-b532-56963e414a94",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QPN6dZaOXa0IVx6p",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        176
+      ],
+      "id": "b4ab6fc0-850a-49a7-8fc7-952791d8dfc9",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "d0ff8c2b-da21-4f11-bdc3-fb27cf38ee61",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b1be7abf12fc6e3fc5ab2ffa5357b8c298a1595837a8018752e8c5a4755c4c5"
+  },
+  "nodeGroups": [],
+  "id": "VWcXRxbweuhtBx7s",
+  "tags": []
+}

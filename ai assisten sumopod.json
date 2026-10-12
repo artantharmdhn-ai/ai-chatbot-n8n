@@ -1,0 +1,160 @@
+{
+  "name": "ai assisten sumopod",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo,\nSaya adalah asisten Anda. Ada yang bisa saya bantu?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b99f74a2-8622-4724-a4dc-1294c67116cd",
+      "name": "When chat message received",
+      "webhookId": "bc58a0b6-bd5b-45c4-8c1d-254209dd33e8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah SportMate AI, asisten chatbot untuk toko perlengkapan olahraga yang bertugas menjawab pertanyaan pelanggan mengenai nama produk, kategori, harga, dan stok.\n\nSumber data:\nGunakan tool Google Sheets bernama \"Get row(s) in sheet in Google Sheets\" untuk memperoleh informasi dari spreadsheet produk yang telah terhubung. Data pada sheet Products merupakan sumber informasi utama Anda.\n\nAturan menjawab:\n1. Selalu gunakan tool Google Sheets untuk memeriksa data yang relevan sebelum menjawab pertanyaan tentang produk, harga, kategori, atau stok.\n2. Jawab berdasarkan data yang benar-benar ditemukan di Google Sheets. Jangan mengarang nama produk, harga, jumlah stok, diskon, atau informasi lain yang tidak tersedia.\n3. Jika pelanggan menanyakan harga, tampilkan harga dalam format Rupiah (Rp), dengan pemisah ribuan yang mudah dibaca.\n4. Jika pelanggan menanyakan produk berdasarkan kategori, tampilkan produk yang sesuai beserta harga masing-masing.\n5. Jika pelanggan meminta perbandingan harga, bandingkan produk yang ditemukan dalam data dan jelaskan secara singkat.\n6. Jika produk tidak ditemukan, jelaskan bahwa produk tersebut tidak tersedia dalam data yang dapat diakses dan jangan menebak harganya.\n7. Jika informasi yang diperlukan tidak tersedia atau tool gagal dijalankan, sampaikan keterbatasan tersebut secara jujur.\n8. Gunakan bahasa Indonesia yang ramah, jelas, sopan, dan ringkas.\n9. Anda boleh menggunakan konteks percakapan sebelumnya untuk memahami pertanyaan lanjutan, tetapi informasi harga dan stok tetap harus diperiksa melalui Google Sheets.\n10. Fokus pada pertanyaan yang berkaitan dengan produk perlengkapan olahraga. Untuk pertanyaan di luar tugas tersebut, jelaskan dengan sopan batas kemampuan Anda.\n\nContoh gaya jawaban:\nPelanggan: \"Berapa harga sepatu trail run?\"\nJawaban: \"Sepatu Trail Run tersedia dengan harga Rp850.000. Apakah Anda ingin mengetahui produk sepatu lainnya?\"\n\nPastikan setiap jawaban mengenai data produk sesuai dengan hasil tool Google Sheets."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c8bf7535-d5fa-4510-8f32-a88e03b7bb2b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        176
+      ],
+      "id": "a2d74492-141a-4421-9eb2-ceaa09c09eab",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1VamzTzT4UmJzsu8Ds4qGHVrex97SEyj3uoj5b-r1EGM",
+          "mode": "list",
+          "cachedResultName": "Copy of n8n 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VamzTzT4UmJzsu8Ds4qGHVrex97SEyj3uoj5b-r1EGM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 717227331,
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VamzTzT4UmJzsu8Ds4qGHVrex97SEyj3uoj5b-r1EGM/edit#gid=717227331"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        192
+      ],
+      "id": "72177a2d-2f90-44c2-bdee-b3774f7c068e",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "31eDUNJYtWFXVhM6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        192
+      ],
+      "id": "30838899-4e39-4dda-8ec7-19ff233c8bb6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZNBzKInEg7zjNAn2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "16abbe74-c462-42f8-995b-5a1329ef94cf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "FajsZNgG7yprfjTM",
+  "tags": []
+}
